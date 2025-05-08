@@ -1,10 +1,10 @@
 # Cookie Monster Secret Recipe
 ###### Solved by @Juh-s
 >This is a CTF about Web Exploitation
-## About the Challenge
+## Sobre o desafio
 Cookie Monster has hidden his top-secret cookie recipe somewhere on his website. As an aspiring cookie detective, your mission is to uncover this delectable secret. Can you outsmart Cookie Monster and find the hidden recipe?
 You can access the Cookie Monster [here](http://verbal-sleep.picoctf.net:60118/) and good luck.
-## Solution
+## Solução
 **Introdução**
 
 Esse desafio é resolvido através de um site, onde o usuário pode realizar o login para acessar a "Receita Secreta do Monstro do Cookie".
