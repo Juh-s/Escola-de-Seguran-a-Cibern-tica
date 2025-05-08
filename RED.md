@@ -6,6 +6,12 @@ RED, RED, RED, RED
 
 Download the image: [red.png](https://challenge-files.picoctf.net/c_verbal_sleep/831307718b34193b288dde31e557484876fb84978b5818e2627e453a54aa9ba6/red.png)
 
+Tradução:
+
+VERMELHO, VERMELHO, VERMELHO, VERMELHO
+
+Baixe a imagem: [red.png](https://challenge-files.picoctf.net/c_verbal_sleep/831307718b34193b288dde31e557484876fb84978b5818e2627e453a54aa9ba6/red.png)
+
 ## Solução
 **Introdução**
 
@@ -15,9 +21,9 @@ A imagem dada pelo desafio é apenas um quadrado vermelho sem nenhuma informaç�
 
 **Análise Inicial**
 
-Como esse desafio nos entrega somente uma imagem, é necessário encontrar algum outro jeito de obter informações para solucionar o problema.
+Como esse desafio nos entrega somente uma imagem e sabemos que ele é do tipo [Forensics](https://wiki.studsec.nl/books/ctf-guides/page/forensics), é necessário encontrar algum outro jeito de obter informações para solucionar o problema.
 
-Utilizando o terminal para abrir o arquivo, obtemos o seguinte texto: 
+Utilizando o [terminal](https://webshell.picoctf.org/) do próprio picoCTF para abrir o arquivo, devemos utilizar o comando [zsteg](https://csyclub-iiitk.gitbook.io/ctf-guide/forensics/steganography) que lê esse arquivo instalado: `$ zsteg red.png` e então obtemos o seguinte texto: 
 
 ![image](https://github.com/user-attachments/assets/d5ce1c8e-d55f-4aae-bce0-98e70931ca97)
 
