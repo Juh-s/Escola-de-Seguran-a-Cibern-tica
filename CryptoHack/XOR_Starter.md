@@ -75,4 +75,5 @@ A flag do desafio fica:
 
 **Aplicação no dia a dia**
 
-Solucionar um desafio como esse é de extrema importância, já que a criptografia com o operador XOR representa um conceito fundamental em segurança da informação. Alguns exemplos tanto para uso pessoal ou para empresas, são: Proteção de dados pessoais, arquivos armazenados com senha e desenvolvimento de software seguro
+Solucionar um desafio como esse é de extrema importância, já que a criptografia com o operador XOR representa um conceito fundamental em segurança da informação. Alguns exemplos tanto para uso pessoal ou para empresas, são: Proteção de dados pessoais, arquivos armazenados com senha e desenvolvimento de software seguro.
+Dessa forma, mesmo que o XOR seja uma operação simples, entender como ele funciona é essencial para a criptografia e outras áreas da informação.
