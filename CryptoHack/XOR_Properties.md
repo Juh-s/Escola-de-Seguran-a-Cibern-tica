@@ -69,39 +69,42 @@ Nas linhas 1-4 definimos as entradas do desafio, que são valores [hexadecimais]
 9  final_xor = bytes.fromhex(final_xor_hex)
 ```
 Nas linhas 6-9, convertemos as [strings](https://pt.wikipedia.org/wiki/Cadeia_de_caracteres) hexadecimais para objetos de [bytes](https://pt.wikipedia.org/wiki/Byte), que são manipuláveis no Python para realizar o XOR byte a byte.
-
 ```
 11  def xor_bytes(a, b):
 12      return bytes(x ^ y for x, y in zip(a, b))
 ```
 Essa é uma função auxiliar para aplicar o operador XOR entre dois [vetores](https://docs.python.org/pt-br/3/library/array.html) de bytes, ela pega dois blocos de bytes e devolve um novo bloco, onde cada byte é o resultado do XOR dos bytes correspondentes.
-`zip(a, b)`: Emparelha os bytes correspondentes nos dois vetores.
-`return bytes(x ^ y for x, y in zip(a, b))`: Retorna uma nova sequência de bytes com a operação feita byte a byte.
 
+`zip(a, b)`: Emparelha os bytes correspondentes nos dois vetores.
+
+`return bytes(x ^ y for x, y in zip(a, b))`: Retorna uma nova sequência de bytes com a operação feita byte a byte.
 ```
 14  key2 = xor_bytes(key1, key1_key2_xor)
 ```
-
+Usamos a propriedade do XOR na qual se o valor de `key1` é conhecido e temos `key1 ^ key2`, conseguimos obter o valor de `key2` realizando a conta `key1 ^ (key1 ^ key2) = key2`.
 ```
 16  key3 = xor_bytes(key2, key2_key3_xor)
 ```
-
+Da mesma forma que foi possível encontrar `key2` pela propriedade do XOR, esse passo deve ser repetido para achar o `key3`, agora usando os valores de `key2 e key3`.
 ```
 18  step1 = xor_bytes(final_xor, key1)
 19  step2 = xor_bytes(step1, key2)
 20  flag = xor_bytes(step2, key3)
 ```
-
+As linhas 18-20 representam o último passo antes de se obter a flag do desafio. O que elas fazem é desfazer a operação `FLAG ^ KEY1 ^ KEY2 ^ KEY3` utilizando a mesma properiedade de XOR que foi utilizada para descobrir os valores de `key2 e key3`, porém excluindo `key1`, depois `key2` e por fim `key3`, isolando a `FLAG`
 ```
 22  print(flag.decode())
 ```
+A flag final é exibida como uma string, porque ela está codificada em [ASCII](https://pt.wikipedia.org/wiki/ASCII).
 
 **Solução final**
 
+Ao rodar o código, ele nos entrega a flag já no modelo pedido pelo desafio:
 
->`crypto{}`
+>`crypto{x0r_i5_ass0c1at1v3}`
 
 **Aplicação no dia a dia**
 
-
+É muito importante entender as propriedades do XOR, afim de facilitar desafios como esse, além de ser fundamental em situações reais como: Engenharia reversa e análise de malware, protocolos de rede e detecção de falhas ou até mesmo na compactação e codificação de dados.
+Ou seja, esse exercício ensina a manipular e desfazer operações XOR, que estão presentes em várias áreas da cibersegurança, desde a criptografia básica até a análise de malware e sistemas de proteção de dados.
 
