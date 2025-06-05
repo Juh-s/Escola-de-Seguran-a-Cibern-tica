@@ -35,53 +35,73 @@ O exercício nos explica como funcionam as [propriedades do XOR](https://pt.wiki
 
 **Análise Inicial**
 
-Observando a dica dada no desafio, podemos ver que é possível realizar as operações para descobrir a flag utilizando a linguagem [Python](https://pt.wikipedia.org/wiki/Python),
+Uma maneira de resolver o desafio, é utilizar a linguagem [Python](https://pt.wikipedia.org/wiki/Python), realizando as operações de XOR necessárias.
 
+Além disso, o exercício nos mostra algumas propriedades específicas do operador XOR e pede para que sejam usadas para desfazer a criptografia na linha da `FLAG`.
+
+Dessa forma, ao fazer a análise da linha:
+```
+FLAG ^ KEY1 ^ KEY3 ^ KEY2 = 04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf
+```
+É possivel realizar a operação XOR novamente com `KEY1`, `KEY3`, `KEY2` para usar as propriedades `Associative` (Associativa) e `Self-Inverse` (Inverso próprio), anulando esses termos e restando somente a `FLAG`.
+ 
 **Análise Final**
 
 Implementando o código no [Visual Studio Code](https://pt.wikipedia.org/wiki/Visual_Studio_Code) para solucionar o problema, temos:
 
-![image](https://github.com/user-attachments/assets/33831839-1656-4b25-bc72-830f8bd9950b)
+![image](https://github.com/user-attachments/assets/0b251c0d-ef16-4e9e-9bbf-7ae8d25a4a52)
 
 
 Explicação por linhas:
 
 ```
-1  original = "label"
+1  key1_hex = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
+2  key1_key2_xor_hex = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
+3  key2_key3_xor_hex = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
+4  final_xor_hex = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"
 ```
-Essa linha define uma [string](https://pt.wikipedia.org/wiki/Cadeia_de_caracteres) chamada original, com o valor `label` dado no enunciado. Essa é a mensagem que será transformada com o uso do operador XOR.
+Nas linhas 1-4 definimos as entradas do desafio, que são valores [hexadecimais](https://pt.wikipedia.org/wiki/Sistema_de_numera%C3%A7%C3%A3o_hexadecimal), dados na segunda imagem. Dessa forma, é possível observar que a `key1` foi definida diretamente, diferente das outras que são resultados de operações XOR entre elas.
 
 ```
-3  xor_value = 13
+6  key1 = bytes.fromhex(key1_hex)
+7  key1_key2_xor = bytes.fromhex(key1_key2_xor_hex)
+8  key2_key3_xor = bytes.fromhex(key2_key3_xor_hex)
+9  final_xor = bytes.fromhex(final_xor_hex)
 ```
-Define a chave do XOR, que será usada para codificar cada caractere da string `original`. O valor `13` será aplicado bit a bit em cada caractere com a operação XOR.
+Nas linhas 6-9, convertemos as [strings](https://pt.wikipedia.org/wiki/Cadeia_de_caracteres) hexadecimais para objetos de [bytes](https://pt.wikipedia.org/wiki/Byte), que são manipuláveis no Python para realizar o XOR byte a byte.
 
 ```
-5  string = ''.join([chr(ord(c)^xor_value) for c in original])
+11  def xor_bytes(a, b):
+12      return bytes(x ^ y for x, y in zip(a, b))
 ```
-Essa linha faz a tranformação da string `original` usando o operador XOR.
-* `for c in original`: Percorre cada caractere "c" da string "label".
-* `ord(c)`: Converte o caractere "c" em seu código [ASCII](https://pt.wikipedia.org/wiki/ASCII).
-* `ord(c)^xor_value`: Aplica a operação XOR bit a bit entre o valor ASCII de "c" e o valor de `xor_value` que é `13`.
-* `chr(  )`:Converte o resultado numérico de volta em caractere.
-* `[  for c in original]`: Cria uma lista de caracteres já transformados.
-* `string = ''.join([  ])`: Junta todos os caracteres em uma frase chamada `string`.
+Essa é uma função auxiliar para aplicar o operador XOR entre dois [vetores](https://docs.python.org/pt-br/3/library/array.html) de bytes, ela pega dois blocos de bytes e devolve um novo bloco, onde cada byte é o resultado do XOR dos bytes correspondentes.
+`zip(a, b)`: Emparelha os bytes correspondentes nos dois vetores.
+`return bytes(x ^ y for x, y in zip(a, b))`: Retorna uma nova sequência de bytes com a operação feita byte a byte.
 
 ```
-7  print(string)
+14  key2 = xor_bytes(key1, key1_key2_xor)
 ```
-Imprime o resultado final da `string` codificada com XOR.
+
+```
+16  key3 = xor_bytes(key2, key2_key3_xor)
+```
+
+```
+18  step1 = xor_bytes(final_xor, key1)
+19  step2 = xor_bytes(step1, key2)
+20  flag = xor_bytes(step2, key3)
+```
+
+```
+22  print(flag.decode())
+```
 
 **Solução final**
 
-Ao rodar o código, obtemos a palavra `aloha` e então, basta digitar no modelo pedido pelo desafio: `crypto{nova_string}`.
 
-A flag do desafio fica:
-
->`crypto{aloha}`
+>`crypto{}`
 
 **Aplicação no dia a dia**
 
-Solucionar um desafio como esse é de extrema importância, já que a criptografia com o operador XOR representa um conceito fundamental em segurança da informação. Alguns exemplos tanto para uso pessoal ou para empresas, são: Proteção de dados pessoais, arquivos armazenados com senha e desenvolvimento de software seguro.
-Dessa forma, mesmo que o XOR seja uma operação simples, entender como ela funciona é essencial para a criptografia e outras áreas da informação.
+
 
