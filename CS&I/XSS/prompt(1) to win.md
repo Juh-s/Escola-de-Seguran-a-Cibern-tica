@@ -67,6 +67,9 @@ Digitando o seguinte: `"><script>prompt(1)</script>`, o navegador fecha o campo 
 
 <img width="1481" height="646" alt="image" src="https://github.com/user-attachments/assets/49c7ae56-bf1f-4f79-957f-c0427e6cdc8a" />
 
+Input necessário:
+>`"><script>prompt(1)</script>`
+
 ## Fase 1
 **Análise Inicial**
 
