@@ -212,7 +212,7 @@ Dessa vez o código é um pouco maior do que o comum, então é valido entender 
 ```
 1  function escape(input) {
 ```
-Define a função que recebe um valor _input_ como entrada
+Define a função que recebe um valor _input_ como entrada.
 ```
 2      // make sure the script belongs to own site
 3      // sample script: http://prompt.ml/js/test.js
@@ -425,7 +425,7 @@ Input necessário:
 
 Segue a estrutura da fase 8:
 
-
+<img width="1457" height="715" alt="Screenshot 2025-08-31 184414" src="https://github.com/user-attachments/assets/7554d745-d054-479a-b786-08df77c1c382" />
 
 Seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é representado pelas linhas:
 
