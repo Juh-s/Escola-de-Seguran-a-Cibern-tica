@@ -367,7 +367,7 @@ Uma entrada válida seria `"><svg/a=#"onload='/*#*/prompt(1)'`, pois:
 
 Input necessário:
 
->"><svg/a=#"onload='/*#*/prompt(1)'
+>`"><svg/a=#"onload='/*#*/prompt(1)'`
 
 ## Fase 8
 
