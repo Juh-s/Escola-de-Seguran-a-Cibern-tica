@@ -430,14 +430,16 @@ Segue a estrutura da fase 8:
 Seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é representado pelas linhas:
 
 ```
-1  function escape(input) {
-2      // pass in something like dog#cat#bird#mouse...
-3      var segments = input.split('#');
-4      return segments.map(function(title) {
-5          // title can only contain 12 characters
-6          return '<p class="comment" title="' + title.slice(0, 12) + '"></p>';
-7      }).join('\n');
-8  }
+1   function escape(input) {
+2      // prevent input from getting out of comment
+3      // strip off line-breaks and stuff
+4      input = input.replace(/[\r\n</"]/g, '');
+5      
+6      return '                                \n\
+7   <script>                                   \n\
+8      // console.log("' + input + '");        \n\
+9   </script> ';
+10  }
 ```
 
 
@@ -450,6 +452,177 @@ Seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é represe
 Input necessário:
 
 >
+
+## Fase 9
+
+**Análise Inicial**
+
+A fase 9 tem a seguinte estrutura:
+
+<img width="1442" height="711" alt="image" src="https://github.com/user-attachments/assets/8a40a477-9cf8-465d-a453-feadcdf5bbbe" />
+
+Além disso, seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é esse:
+
+```
+1   function escape(input) {
+2      // filter potential start-tags
+3      input = input.replace(/<([a-zA-Z])/g, '<_$1');
+4      // use all-caps for heading
+5      input = input.toUpperCase();
+6      
+7      // sample input: you shall not pass! => YOU SHALL NOT PASS!
+8      return '<h1>' + input + '</h1>';
+9   }
+```
+
+
+**Análise final**
+
+
+Input necessário:
+
+>
+
+## Fase A (10)
+
+**Análise Inicial**
+
+Esta fase tem a seguinte estrutura:
+
+<img width="1470" height="696" alt="image" src="https://github.com/user-attachments/assets/01d3f0b4-8c9b-44bf-ad0e-810e61cc42da" />
+
+O seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é representado por essas linhas:
+
+```
+1   function escape(input) {
+2      // (╯°□°）╯︵ ┻━┻
+3      input = encodeURIComponent(input).replace(/prompt/g, 'alert');
+4      // ┬──┬ ﻿ノ( ゜-゜ノ) chill out bro
+5      input = input.replace(/'/g, '');
+6      
+7      // (╯°□°）╯︵ /(.□. \）DONT FLIP ME BRO
+8      return '<script>' + input + '</script> ';
+9   }
+```
+
+Essa fase é mais divertida, principalmente por sua estrutura, já que existe uma historinha entre as linhas do código. Mas fora isso, o que o código faz é mandar um alerta para o usuário caso ele digite `prompt` e também remover as aspas simples se digitadas. Além disso, a linha 8 nos mostra que a função já retorna uma tag `<script>`.
+
+Dessa forma, ao fazer o teste colocando o comando `prompt(1)` no __Enter input_, obtemos:
+
+<img width="1446" height="712" alt="image" src="https://github.com/user-attachments/assets/ff302508-7775-41bf-8017-e843aad3121a" />
+
+Ou seja, ele transformou o comando em um alerta que retorna o número 1.
+
+**Análise final**
+
+Uma análise bem fácil de ser feita é entender que o código "ignora" as aspas simples, então elas podem ser usadas a nosso favor para que seja possível digitar o comando de `prompt(1)` de forma que ele não seja substituído por um comando de alerta.
+
+Então basta colocar um caractere `'` no meio da palavra `prompt` para que o código não a mude, já que esse sinal será ignorado de qualquer maneira.
+
+<img width="1452" height="632" alt="image" src="https://github.com/user-attachments/assets/b216e25d-11ea-44ea-a8e3-12f3b5ec33e9" />
+
+Input necessário:
+
+>pro'mpt(1)
+
+## Fase B (11)
+
+**Análise Inicial**
+
+A próxima fase tem essa representação:
+
+<img width="1446" height="847" alt="image" src="https://github.com/user-attachments/assets/e162f51f-a271-40b7-822a-1b030b197c1f" />
+
+E o seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é esse:
+
+```
+1  function escape(input) {
+2      // name should not contain special characters
+3      var memberName = input.replace(/[[|\s+*/\\<>&^:;=~!%-]/g, '');
+4
+5      // data to be parsed as JSON
+6      var dataString = '{"action":"login","message":"Welcome back, ' + memberName + '."}';
+7
+8      // directly "parse" data in script context
+9      return '                                \n\
+10  <script>                                   \n\
+11     var data = ' + dataString + ';          \n\
+12     if (data.action === "login")            \n\
+13         document.write(data.message)        \n\
+14  </script> ';
+15  }   
+```
+
+Explicando mais sobre o que o código faz:
+
+* O _input_ do usuário vai para a variável _memberName_.
+* Esse _memberName_ é colocado dentro de uma string [JSON](https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Core/Scripting/JSON).
+* O que foi digitado pelo usuário será devolvido na saída, no formato de `Welcome back, (input do usuário)`.
+* Ele bloqueia diversos tipos de caracteres especiais, porém não remove a palavra `in` nem os parentêses.
+
+Para resolver essa fase, é necessário fazer com que o código rode o comando `prompt(1)`, porém sem o uso de tags ou argumentos que utilizam os caracteres bloqueados.
+
+**Análise final**
+
+Como foi analisado anteriormente, o código não bloqueia o uso do operador `in` nem o uso dos parentêses, então é válido usar o [operador in](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/in) para que seja executado o comando que desejamos.
+
+O funcionamento desse operador é bem simples, ele verifica se uma propriedade existe em um objeto. Porém, antes de verificar ele precisa avaliar o que foi passado anteriormente e nesse caso, é o `prompt(1)` que será executado instantaneamente. Além disso, não importa se o valor que o operador retorna é _true_ ou _false_, visto que o comando já foi executado.
+
+Então basta colocar esse operador após o comando, que será possível avançar de fase.
+
+<img width="1452" height="777" alt="image" src="https://github.com/user-attachments/assets/892ee1dd-dfc0-4a8f-aa7b-e227bdca2efb" />
+
+Input necessário:
+
+>"(prompt(1))in"
+
+## Fase C (12)
+
+**Análise Inicial**
+
+A fase 12 tem a seguinte representação:
+
+<img width="1463" height="701" alt="image" src="https://github.com/user-attachments/assets/b958d230-8983-497d-b54a-8cebe231380e" />
+
+E o seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é esse:
+
+```
+1   function escape(input) {
+2      // in Soviet Russia...
+3      input = encodeURIComponent(input).replace(/'/g, '');
+4      // table flips you!
+5      input = input.replace(/prompt/g, 'alert');
+6      
+7      // ノ┬─┬ノ ︵ ( \o°o)\
+8      return '<script>' + input + '</script> ';
+9   }
+```
+Essa fase faz uma referência a historinha da fase 10, invertendo a situação que aconteceu, tanto na história quanto no código. Estes foram os valores invertidos:
+
+* `input = encodeURIComponent(input).replace(/prompt/g, 'alert');` se tornou `input = encodeURIComponent(input).replace(/'/g, '');`.
+* `input = input.replace(/'/g, '');` se tornou `input = input.replace(/prompt/g, 'alert');`.
+
+Ao analisar o funcionamento desse código, entende-se que será necessário executar o comando `prompt(1)` sem digitar essa palavra, porque a função irá transformá-la diretamente em um alerta no site.
+
+<img width="1455" height="631" alt="image" src="https://github.com/user-attachments/assets/3d7c8a8a-a07a-41c4-ada7-55723e9dad5e" />
+
+**Análise final**
+
+Para fugir desse bloqueio do código, é possível escrever a palavra `prompt` de forma codificada, para que ela não seja transformada em `alert`.
+
+Dito disso, o método .toString( ) pega um número inteiro e o converte para uma string usando dígitos válidos na base escolhida. Ou seja, caso a base escolhida fosse 16, não seria possível converter as letras da palavra `prompt` visto que a base 16 só vai até a letra f. Por isso, a base escolhida foi 30, visto que ela termina exatamente na letra t, que é a última do alfabeto necessária para formar a palavra. Portanto, o número `0x258da033` convertido para a base 30, retorna exatamente a palavra necessária para executar o comando.
+
+Um operador válido que computa um código em JavaScript representado como uma string é a função [`eval( )`](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/eval).
+
+Ao montar exatamente como o _input_ deve ser, temos:
+
+* `eval(0x258da033.toString(30))(1)` onde o comando eval computa o código, o número 0x258da033 é convertido em string na base 30 e o número (1) é inserido após a chamada do `prompt`.
+
+<img width="1451" height="617" alt="image" src="https://github.com/user-attachments/assets/563e351e-b824-4f6c-b42a-6d434ef9a8de" />
+
+Input necessário:
+
+>eval(0x258da033.toString(30))(1)
 
 ## Conclusão
 ...
