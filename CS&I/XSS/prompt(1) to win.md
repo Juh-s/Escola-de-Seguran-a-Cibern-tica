@@ -1,6 +1,6 @@
 # prompt(1) to win
 ###### Solved by @Juh-s
->This is a game about XSS injection
+>This is a game about XSS injection, JavaScript and HTML analysis
 ## Sobre o desafio
 **Rules**
 
@@ -94,13 +94,23 @@ Na imagem ilustrada é possível observar que o nome de usuário se mantém e um
 
 Porém dessa vez, o código cria uma váriável `var stripTagsRE = /<\/?[^>]+>/gi;` que confere o uso de tags que podem ser injetadas e além disso possui um `input = input.replace(stripTagsRE, '');`, um comando que remove essas possíveis tags. Além disso, ele insere o dado recebido pelo usuário dentro de um [`<article>`](https://developer.mozilla.org/pt-BR/docs/Web/HTML/Reference/Elements/article), ao invés de colocar no _value_ como na questão passada.
 
-Como não dá para usar o mesmo método para resolver a questão, porque se o comando `<script>` for inserido ele será deletado. 
-
-...
+Como não dá para usar o mesmo método para resolver a questão, porque se o comando `<script>` for inserido ele será deletado, é possível utilizar a tag [`<svg>`](https://www.w3schools.com/TAGS/tag_svg.asp) juntamente ao evento `[onload]`(https://www.w3schools.com/jsref/event_onload.asp) para executar imediatamente o comando.
 
 **Análise final**
 
-...
+Ao digitar o seguinte no _Enter input_: `<svg/onload=prompt(1)`
+
+<img width="1457" height="672" alt="image" src="https://github.com/user-attachments/assets/6bb89c17-4124-43a7-9ff9-54244ce88597" />
+
+Não deu certo porque o comando entrou no `<article>`, que não permitiu que ele fosse executado. Porém, basta fazer uma quebra de linha para que o comando seja colocado para fora dessa tag.
+
+<img width="1178" height="527" alt="image" src="https://github.com/user-attachments/assets/38436f0f-196c-440a-95b3-4291df3ab63c" />
+
+Input necessário:
+
+><svg/onload
+
+>=prompt(1)
 
 ## Fase 2
 
@@ -474,14 +484,19 @@ Além disso, seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScrip
 8      return '<h1>' + input + '</h1>';
 9   }
 ```
+Essa função tenta evitar um HTML malicioso ao converter o texto dentro da tag _<h1>_ para maiúsculas, além de alterar o texto da tag `<script>`.
 
+Porém, é possível substituir os textos por [entidades HTML](https://www.freeformatter.com/html-entities.html), no caso do comando `prompt(1)`. Além disso, será preciso alterar a tag `<svg>` para usá-la também.
 
 **Análise final**
 
+Uma maneira de mudar a tag `<svg>`, é alterar a letra s pelo símbolo [ſ](https://unicodeplus.com/U+017F), pois eles tem a mesma funcionalidade no HTML.
+
+<img width="1166" height="510" alt="image" src="https://github.com/user-attachments/assets/ca946c75-0362-4c34-affc-731b7a21c78c" />
 
 Input necessário:
 
->
+><ſvg/onload=&#112;&#114;&#111;&#109;&#112;&#116;&#40;&#49;&#41;>
 
 ## Fase A (10)
 
