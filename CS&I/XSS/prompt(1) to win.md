@@ -94,7 +94,7 @@ Na imagem ilustrada é possível observar que o nome de usuário se mantém e um
 
 Porém dessa vez, o código cria uma váriável `var stripTagsRE = /<\/?[^>]+>/gi;` que confere o uso de tags que podem ser injetadas e além disso possui um `input = input.replace(stripTagsRE, '');`, um comando que remove essas possíveis tags. Além disso, ele insere o dado recebido pelo usuário dentro de um [`<article>`](https://developer.mozilla.org/pt-BR/docs/Web/HTML/Reference/Elements/article), ao invés de colocar no _value_ como na questão passada.
 
-Como não dá para usar o mesmo método para resolver a questão, porque se o comando `<script>` for inserido ele será deletado, é possível utilizar a tag [`<svg>`](https://www.w3schools.com/TAGS/tag_svg.asp) juntamente ao evento `[onload]`(https://www.w3schools.com/jsref/event_onload.asp) para executar imediatamente o comando.
+Como não dá para usar o mesmo método para resolver a questão, porque se o comando `<script>` for inserido ele será deletado, é possível utilizar a tag [`<svg>`](https://www.w3schools.com/TAGS/tag_svg.asp) juntamente ao evento [`onload`](https://www.w3schools.com/jsref/event_onload.asp) para executar imediatamente o comando.
 
 **Análise final**
 
@@ -196,67 +196,7 @@ Input necessário:
 
 ## Fase 4
 
-**Análise Inicial**
-
-A estrutura desta fase é a seguinte:
-
-<img width="1447" height="747" alt="image" src="https://github.com/user-attachments/assets/0b75ae20-3810-4d0d-ab1c-8ea045a69425" />
-
-E o código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) que a representa é:
-
-```
-1  function escape(input) {
-2      // make sure the script belongs to own site
-3      // sample script: http://prompt.ml/js/test.js
-4      if (/^(?:https?:)?\/\/prompt\.ml\//i.test(decodeURIComponent(input))) {
-5          var script = document.createElement('script');       
-6          script.src = input;
-7          return script.outerHTML;
-8      } else {
-9          return 'Invalid resource.';
-10     }
-11  }
-``` 
-Dessa vez o código é um pouco maior do que o comum, então é valido entender o que cada linha faz.
-
-```
-1  function escape(input) {
-```
-Define a função que recebe um valor _input_ como entrada.
-```
-2      // make sure the script belongs to own site
-3      // sample script: http://prompt.ml/js/test.js
-```
-Comentários que expressam que a função só aceitará scripts que vierem to próprio site `https://prompt.ml/`, além de dar um exemplo de URL que seria aceita.
-```
-4      if (/^(?:https?:)?\/\/prompt\.ml\//i.test(decodeURIComponent(input))) {
-```
-Irá checar se a URL começa com `http://`, `https://` ou só `//` e em seguida vem o `prompt.ml`. Depois o `.test( )` retorna _true_ caso o começo tenha sido digitado no padrão correto. Além disso, o `decodeURIComponent(input)` irá decodificar componentes [URI](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) em caracteres especiais.
-```
-5          var script = document.createElement('script');       
-```
-Se passar pela validação, irá gerar um novo `<script>`.
-```
-6          script.src = input;
-```
-Coloca na variável _scr_ do script, o que foi digitado.
-```
-7          return script.outerHTML;
-```
-Retorna o HTML completo com as alterações feitas pela função.
-
-Para testar a funcionalidade da validação da função, é possível digitar `prompt(1)` e analisar o que retornará.
-
-<img width="1450" height="750" alt="image" src="https://github.com/user-attachments/assets/73206bfa-1c8e-4086-8dec-4617161db64c" />
-
-Exatamente o que era esperado, a função retorna _Invalid resource._ para essa entrada.
-
-**Análise final**
-
-...
-
-Input necessário:
->
+Não foi possível resolver.
 
 ## Fase 5
 
@@ -452,6 +392,7 @@ Seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é represe
 10  }
 ```
 
+/
 
 **Análise final**
 
@@ -652,7 +593,6 @@ Esta fase tem a seguinte estrutura:
 
 O seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é representado por essas linhas:
 
-
 ```
 1  function escape(input) {
 2      // extend method from Underscore library
@@ -689,8 +629,23 @@ O seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é repre
 33 }        
 ```
 
+De maneira simples, essa função:
+
+* Analisa um [JSON](https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Core/Scripting/JSON) contendo a [URL](https://tecnoblog.net/responde/o-que-e-url/) de uma imagem
+* Usa um método de [extend](https://www.tutorialspoint.com/underscorejs/underscorejs_extend.htm)
+* Tenta validar a URL com uma [regex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) simples
+* Gera uma tag que substitui _{{source}}_
 
 **Análise final**
+
+Para avançarmos de fase, será necessário usar o seguinte _Input_:
+
+`{"source":{},"&#95;&#95;proto&#95;&#95;":{"source":"$`onerror=prompt(1)>"}}`
+
+* A entrada usa [proto](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/proto) para inserir _source_ no `obj[prop] = source[prop]`.
+* A função _extend( )_ copia isso "sem querer".
+* O código acessa _config.source_, que resolve para _Object.prototype.source_.
+* A string é inserida no HTML, via `onerror`.
 
 <img width="1171" height="512" alt="image" src="https://github.com/user-attachments/assets/41d1eb7f-e1ca-4d85-a741-bb0911384f8e" />
 
@@ -771,12 +726,14 @@ Input necessário:
 >`"><svg><!--#--><script><!--#-->prompt(1<!--#-->)</script>`
 
 ## Conclusão
-...
 
-Existem diversas maneiras de quebrar as regras impostas por essas fases, principalmente com payloads mais curtos dos que foram usados, como sugerem as regras do jogo. 
+Esse site é muito interessante para aprender sobre vulnerabilidades em JavaScript, pois ele desafia o usuário na prática como explorá-las. Além disso, existem diversas maneiras de quebrar as regras impostas por essas fases, principalmente com payloads mais curtos dos que foram usados, como sugerem as regras do jogo.
 
-Essa vulnerabilidade é perigosa pois permite que:
-* haja roubo de dados do usuário,
-* seja possível modificar a página exibida,
-* haja redirecionamento para sites falsos,
-* qualquer código malicioso possa ser executado no navegador do usuário.
+É importante ressaltar que entender sobre essas vulnerabilidades nos ajuda a evitá-las muitas das vezes, isso porque caso elas não sejam detectadas, podem ocasionar em:
+
+* Roubo de dados do usuário,
+* Mudança na página exibida,
+* Redirecionamento para sites falsos,
+* Códigos maliciosos sendo executados no navegador do usuário.
+
+Por isso, saber como uma vulnerabilidade funciona pelo lado de quem está "atacando", é extremamente importante para quem irá realizar a segurança do site.
