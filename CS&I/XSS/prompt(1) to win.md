@@ -392,17 +392,34 @@ Seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é represe
 10  }
 ```
 
-/
+Essa função pega o _input_ do usuário, porém não permite o uso de alguns caracteres especiais. Além disso, ela pega o que foi digitado e insere no `console.log` na forma de comentário.
+
+Para resolver essa fase, é necessário fazer com que o código entenda o comando e não o considere como um comentário, para que seja possível executá-lo. Porém, para fechar a seção do comentário, seria preciso utilizar `"`, mas como a função filtra esse caractere, outra ação precisa ser feita.
 
 **Análise final**
 
+Uma maneira de escapar dessa situação, é usar `\u2028`, que é um caractere de quebra de linha para o JavaScript, porém será necessário inserir esse dado diretamente no _console_ assim como a função mostra na linha 8.
 
+Caso esse caractere seja digitado no _Enter input_ normalmente, ele não funcionará. Isso porque ele vai direto para o comentário e não o executa.
 
+<img width="1147" height="645" alt="image" src="https://github.com/user-attachments/assets/bd843174-1198-4626-b9af-6901615887ac" />
 
+Partindo para o console com a parte do _input_ selecionada, é necessário digitar o seguinte:
+
+`document.getElementById("input").value="\u2028prompt(1)\u2028-->"`
+
+Esse comando irá atribuir o que for escrito depois do sinal de igual ao _input_, além disso o uso do caractere apresentado anteriormente irá quebrar as linhas e o operador `-->` fechará o comentário.
+
+<img width="1630" height="647" alt="image" src="https://github.com/user-attachments/assets/bf9abc15-af26-49a4-98c7-5e5989d82f0f" />
+
+Como é possível ver, o comando de prompt foi adicionado ao _Enter input_ diretamente do console, por isso ele nem entra no comentário do _console.log_. Então basta digitar `enter` no campo do _Enter input_ para que o comando seja separado do fim do comentário.
+
+<img width="1158" height="567" alt="image" src="https://github.com/user-attachments/assets/067c43a4-7cfa-4e7a-ab4b-25dcbf2e5363" />
 
 Input necessário:
 
->
+>`document.getElementById("input").value="\u2028prompt(1)\u2028-->"`
+(diretamente no console)
 
 ## Fase 9
 
