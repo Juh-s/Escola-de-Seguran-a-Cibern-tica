@@ -672,38 +672,7 @@ Input necessário:
 
 ## Fase E (14)
 
-**Análise Inicial**
-
-A fase 14 tem o seguinte formato:
-
-<img width="1455" height="805" alt="image" src="https://github.com/user-attachments/assets/2a7fd1ab-6030-4ac1-8fef-989bcc690ceb" />
-
-Já seu código em [JavaScript](https://pt.wikipedia.org/wiki/JavaScript) é:
-
-```
-1  function escape(input) {
-2      // I expect this one will have other solutions, so be creative :)
-3      // mspaint makes all file names in all-caps :(
-4      // too lazy to convert them back in lower case
-5      // sample input: prompt.jpg => PROMPT.JPG
-6      input = input.toUpperCase();
-7      // only allows images loaded from own host or data URI scheme
-8      input = input.replace(/\/\/|\w+:/g, 'data:');
-9      // miscellaneous filtering
-10     input = input.replace(/[\\&+%\s]|vbs/gi, '_');
-11     
-12     return '<img src="' + input + '">';
-13 }     
-```
-
-
-**Análise final**
-
-
-
-Input necessário:
-
->
+Não foi possível resolver.
 
 ## Fase F (15)
 
