@@ -136,3 +136,4 @@ Feito isso, conseguimos obter a flag:
 
 **Aplicação no dia a dia**
 
+Desafios como esse simulam situações reais de segurança em aplicações web. Isso porque um indivíduo que queira atacar um servidor, pode encontrar arquivos sensíveis dos usuários ou do próprio site. Por isso, é importante identificar esses caminhos esquecidos para que eles não sejam acessados indevidamente e a segurança do servidor seja maior.
