@@ -79,8 +79,23 @@ Isso tudo é importante porque se aproveitarmos que `$perm` seja um objeto `acce
 
 **Solução**
 
-<img width="1422" height="381" alt="image" src="https://github.com/user-attachments/assets/f16ddd3a-9542-4885-a48f-58994ef3b4fd" />
+Portanto, é necessário construir o payload. Para isso, temos a serialização PHP do objeto `access_log`:
 
+`O:10:"access_log":1:{s:8:"log_file";s:7:"../flag";}`.
+
+* `O:10:"access_log":1:` Objeto (O) da classe access_log (10 caracteres no nome), com 1 propriedade.
+* `s:8:"log_file";` Nome da propriedade (8 caracteres).
+* `s:7:"../flag";` Valor da propriedade (7 caracteres: ../flag).
+
+O servidor aplica `urldecode()` e `base64_decode()` antes de `unserialize()`. Portanto devemos enviar o [base64](https://cyberchef.org/#recipe=To_Base64('A-Za-z0-9%2B/%3D')) do string serializado.
+
+Para isso, utilizaremos o site [CyberChef](https://cyberchef.io/#recipe=To_Base64('A-Za-z0-9%2B/%3D')&input=TzoxMDoiYWNjZXNzX2xvZyI6MTp7czo4OiJsb2dfZmlsZSI7czo3OiIuLi9mbGFnIjt9):
+
+<img width="1526" height="618" alt="image" src="https://github.com/user-attachments/assets/d6b664ed-cdc6-4664-b79a-acfe56dbdfd9" />
+
+Depois, basta colocar esse valor no cookie `login` para conseguirmos a flag. (Foi usada uma extensão chamada "Cookie-Editor" que permite fazer essa alteração dos cookies no site).
+
+<img width="1422" height="381" alt="image" src="https://github.com/user-attachments/assets/f16ddd3a-9542-4885-a48f-58994ef3b4fd" />
 
 Feito isso, basta atualizar a página e o site retornará:
 
@@ -89,3 +104,12 @@ Feito isso, basta atualizar a página e o site retornará:
 >`picoCTF{th15_vu1n_1s_5up3r_53r1ous_y4ll_261d1dcc}`
 
 **Aplicação no dia a dia**
+
+Para que não haja esse tipo de vulnerabilidade nos servidores algumas recomendações de segurança são as seguintes:
+
+* Nunca usar `unserialize()` em dados fornecidos pelo usuário. Caso seja preciso, é preferível o uso de formatos seguros e textuais (JSON) com validação escrita.
+* Evitar métodos que executem ações sensíveis, como `__toString`.
+* Não imprimir objetos diretamente em mensagens de erro para não revelar detalhes de implementação ao usuário.
+* Validar qualquer campo que venha de cookies ou input do usuário.
+
+Dessa forma, é possível estabelecer uma segurança maior nos servidores, para que não haja vazamento de dados sensíveis.
