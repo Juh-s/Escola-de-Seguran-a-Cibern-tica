@@ -101,6 +101,8 @@ Feito isso, basta atualizar a página e o site retornará:
 
 <img width="727" height="101" alt="image" src="https://github.com/user-attachments/assets/0fcc344b-4936-4725-b0e9-2ba044cce3cf" />
 
+Flag encontrada:
+
 >`picoCTF{th15_vu1n_1s_5up3r_53r1ous_y4ll_261d1dcc}`
 
 **Aplicação no dia a dia**
