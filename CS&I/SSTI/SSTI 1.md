@@ -1,4 +1,4 @@
-# Secrets
+# SSTI 1
 ###### Solved by @Juh-s
 >This is a CTF about Web Exploitation and SSTI
 ## Sobre o desafio
