@@ -58,11 +58,32 @@ Isso é importante porque:
 * Os payloads de SSTI geralmente precisam passar strings.
 * O engine usado é provavelmente Jinja2 ou Twig, porém como usamos python, iremos considerar o Jinja2.
 
+Primeiro, iremos verificar se é possível acessar objetos com o `request`:
 
+<img width="942" height="83" alt="image" src="https://github.com/user-attachments/assets/8fe70b78-3b90-4962-a634-791bb398933a" />
+
+Isso porque, se esse objeto está disponível no contexto do template, significa que existe uma porta para o ambiente interno do servidor.
+
+Além disso, linguagens e engines em templates permitem acessar objetos e em Python, esses objetos têm atributos especiais:
+
+* `__globals__`: Dicionário de variáveis globais associadas a uma função ou objeto.
+* `__builtins__`: Contém funções e objetos embutidos do Python.
+
+Usamos essa cadeia para alcançar o mecanismo de importação do Python. Pois, a partir de um objeto acessível `request` é possível alcançar `__globals__` e depois `__builtins__` para chamar `__import__`.
+
+A parte `__import__` do payload deve ser escrita da seguinte forma: `__import__('os')`. Porque dessa forma conseguimos obter o módulo `os` dentro do template, que é crucial visto que ele dá acesso a funcionalidades do sistema.
+
+É necessário também usar `.popen('ls')` para descobrirmos os arquivos do diretório atual e encontrarmos o nome e caminho exatos antes de tentar `cat`.
+
+Montando o payload: `{{request.application.__globals__.__builtins__.__import__('os').popen('ls').read()}}`
+
+<img width="933" height="121" alt="image" src="https://github.com/user-attachments/assets/c3215088-262b-4858-9d32-4df787be1615" />
 
 **Solução**
 
-Para solucionar o problema, usamos o seguinte comando que irá ler o arquivo `flag` no sistema do site e retornar o conteúdo:
+Ao acessar `ls` descobrimos que existe um arquivos chamado `flag` nesse mesmo diretório, e então basta ler esse arquivo para obtermos a flag.
+
+Para solucionar o problema, usamos o mesmo payload modificando apenas o `.popen('ls')` para `.popen('cat flag')` que irá ler o arquivo `flag` no sistema do site e retornar o conteúdo:
 
 `{{request.application.__globals__.__builtins__.__import__('os').popen('cat flag').read()}}`
 
@@ -73,3 +94,13 @@ Feito isso, conseguimos obter a flag:
 >`picoCTF{s4rv3r_s1d3_t3mp14t3_1nj3ct10n5_4r3_c001_09365533}`
 
 **Aplicação no dia a dia**
+
+Essa vulnerabilidade é facilmente confundida com ataques de XSS, então nem sempre existe uma proteção contra ela. 
+
+Além disso, para que não exista esse tipo de leitura de arquivos ou exploração da vulnerabilidade, algumas práticas podem ser realizadas:
+
+* Nunca renderizar templates a partir de strings controladas pelo usuário.
+* Não expor objetos inteiros ao contexto do template.
+* Usar sandboxing do engine quando possível.
+
+Feito isso, o servidor ficará menos vulnerável à esse tipo de ataque.
