@@ -32,14 +32,44 @@ Um teste de como o site funciona:
 
 **Análise Inicial**
 
-Uma informação muito importante para saber se um servidor é vulnerável a SSTI é analisar essa tabela:
+Uma informação muito importante para saber se um servidor é vulnerável a SSTI é analisar essa tabela, que nos indica qual engine está sendo usada:
 
 <img width="640" height="386" alt="image" src="https://github.com/user-attachments/assets/d9da9aa9-b5b2-4c66-a7d0-745310fde3f7" />
 
+Seguindo passo a passo da tabela, usando o input `${7*7}` primeiro:
+
+<img width="575" height="311" alt="image" src="https://github.com/user-attachments/assets/713f7e5a-38a3-4b7c-9840-bb74a7afac06" />
+
+O site renderiza literalmente `${7*7}`, ou seja, nada é avaliado.
+
+Porém, ao passar para o próximo passo, `{{7*7}}`: 
+
+<img width="443" height="297" alt="image" src="https://github.com/user-attachments/assets/502c1d98-aa5f-45f1-bd03-c5e9a8e0649e" />
+
+Dessa vez, o site avalia o resultado como `49`.
+
+Com isso, podemos concluir que o [template engine](https://www.treinaweb.com.br/blog/o-que-e-template-engine/) usa a sintaxe de `{{...}}` para avaliação. Ao observar a tabela, o próximo comando para usar é o `{{7*'7'}}`:
+
+<img width="581" height="293" alt="image" src="https://github.com/user-attachments/assets/36fb67a6-bf94-4aec-8272-d474e06b6887" />
+
+O retorno de `7777777` é útil para entendermos que o engine segue uma semântica compatível com Python, isso porque ele sabe tratar tipos distintos e aplicar [operator overloading](https://learn.microsoft.com/pt-br/cpp/cpp/operator-overloading?view=msvc-170) como no Python. Além disso, ele nos mostrar que é possível injetar strings literais no comando `{{...}}` sem que o site as rejeite.
+
+Isso é importante porque:
+* Os payloads de SSTI geralmente precisam passar strings.
+* O engine usado é provavelmente Jinja2 ou Twig, porém como usamos python, iremos considerar o Jinja2.
+
+
+
 **Solução**
+
+Para solucionar o problema, usamos o seguinte comando que irá ler o arquivo `flag` no sistema do site e retornar o conteúdo:
+
+`{{request.application.__globals__.__builtins__.__import__('os').popen('cat flag').read()}}`
+
+<img width="937" height="147" alt="image" src="https://github.com/user-attachments/assets/674f3272-6c92-407f-95f6-7e929c3cfceb" />
 
 Feito isso, conseguimos obter a flag:
 
->`picoCTF{succ3ss_@h3n1c@10n_39849bcf}`
+>`picoCTF{s4rv3r_s1d3_t3mp14t3_1nj3ct10n5_4r3_c001_09365533}`
 
 **Aplicação no dia a dia**
