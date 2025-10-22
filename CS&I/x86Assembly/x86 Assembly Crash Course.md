@@ -79,20 +79,48 @@ As instruções de deslocamento (shift) movem os bits de um registrador para a d
 
 **Rotate instruction**
 
-Funciona de forma semelhante a anterior, mas com uma diferença importante:  mento (shift) movem os bits de um registrador para a direita ou para a esquerda. Elas são úteis para operações aritméticas rápidas, especialmente multiplicação e divisão por potência de dois.
+Funciona de forma semelhante a anterior, mas com uma diferença importante: Os bits que saem de um lado retornam do outro, ao invés de serem substituídos por zeros.
 
-* `shr destino, count   ; shift right`
-* `shl destino, count   ; shift left`
+* `ror destino, count   ; rotate right`
+* `rol destino, count   ; rotate left`
 
-`Count` indica quantas posições os bits devem ser deslocados e quando um bit "sai" de um lado, zero é adicionado do outro. Além disso, durante esse processo o `Carry Flag (CF)` (conteúdo do próximo tópico que foi abordado) recebe o último bit que foi deslocado para fora.
+`ror` move todos os bits para a direita e o `rol` move todos os bits para a esquerda.
 
-**Tipos de operandos**
+## Flags
 
-No geral, existem três tipos de operandos na linguagem Assembly.
+A CPU mantém um registrador especial chamado `EFLAGS`, que contém bits de status atualizados após certas operações. Cada flag representa uma condição específica ou, um resultado da mais recente operação lógica ou aritmética.
 
-* Immediate operands (Operandos imediatos): São valores fixos, que podem ser considerados constantes, diretamente definidos no código.
-* Register operands (Operandos de Registros): Utilizam registradores da CPU para armazenar dados temporários.
-* Memory operands (Operandos de memória): Referenciam endereços de memória, indicados por colchetes.
+O curso nos apresenta essa tabela para entendermos o funcionamento das flags mais comuns:
+
+| Flag | Abreviação | Explicação |
+|----------|----------|----------|
+| Carry  | CF | Indica carry ou borrow em operações aritméticas  |
+| Parity | PF   | Marca se há um número par de bits 1 no resultado   |
+| Auxiliary   | AF   | Usado em aritmética BCD   |
+| Zero | ZF  | Indica que o resultado foi zero   |
+| Sign  | SF   | Indica resultado negativo (bit mais significativo = 1)  |
+| Overflow   | OF   | Detecta overflow em operações com sinal   |
+| Direction  | DF   | Define direção de leitura de strings   |
+| Interrupt Enable   | IF   | Habilita ou desabilita interrupções mascaráveis  |
+
+Essas flags são usadas para o controle de fluxo, por exemplo, as instruções de salto dependem do estado das flags.
+
+## Operações aritméticas
+
+Operações aritméticas são performadas por uma CPU usando instruções aritméticas.
+
+**Instruções de adição e subtração**
+
+* `add destino, valor` soma o valor ao destino e guarda o resultado no próprio destino.
+* `sub destino, valor` subtrai o valor do destino e guarda o resultado nele mesmo.
+Duas flags importantes são: `ZF` (é 1 se o resultado for zero) e `CF` (é 1 se o destino é menor que o valor subtraído).
+
+**Instruções de multiplicação e divisão**
+
+Essas operações usam registros especiais porque o resultado pode ser maior que 32 bits.
+
+* `mul valor` faz `eax * valor = resultado em edx:eax`. Então se o resultado for muito grande, o pedaço mais significativo vai para edx.
+* `div valor` divide o número de 64 bits formado por `edx:eax` por `valor`. Com isso o quociente é `eax` e o resto `edx`.
 
 **Solução**
 
