@@ -1,4 +1,4 @@
-# Buffer Overflow 1
+# Buffer Overflows
 ###### Written by @Juh-s
 >These are challenges about Buffer Overflows
 ## Definição
@@ -16,7 +16,7 @@ Isso faz com que os dados "a mais" sobrescrevam áreas de memória adjacentes, c
 
 * `Exploração maliciosa`: Alguém mal intencionado pode explorar isso enviando dados especialmente elaborados que contêm código malicioso. Quando o buffer "transborda" ele pode sobrescrever o endereço de retorno do programa, redirecionando a execução para o código do atacante. 
 
-## Buffer Overflows
+## Buffer Overflow 1
 
 **Objetivo**
 
@@ -62,7 +62,7 @@ Depois de acessar o user2, basta ler o arquivo com o comando: `cat secret.txt`.
 
 >`omgyoudidthissocool!!`
 
-## Buffer Overflows
+## Buffer Overflow 2
 
 **Objetivo**
 
