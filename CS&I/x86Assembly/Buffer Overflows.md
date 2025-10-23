@@ -103,3 +103,12 @@ Por fim, basta substituir no payload e executar o binário com esse endereço pa
 Acessando novamente o arquivo `secret.txt` usando o comando `cat` e estando conectado no user3 temos:
 
 >`wowanothertime!!`
+
+## Conclusão
+
+É muito importante entender como essa falha implica em corrupção de dados, execução de código arbitrário pelo atacante ou até mesmo a perda de controle de acesso ao sistema.
+
+Para evitar que isso aconteça, a prevenção envolve boas práticas como:
+
+* Verificação de limites: Sempre verificar o tamanho da entrada antes de escrevê-la no buffer para garantir que ela não exceda a capacidade.
+* Linguagens seguras: Usar linguagens de programação que oferecem proteção automática contra acesso indevido à memória.
