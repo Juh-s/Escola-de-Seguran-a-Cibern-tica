@@ -204,16 +204,18 @@ Essa instrução `push` coloca (empilha) um valor no topo da stack (pilha).
 
 * `push fonte` o valor do operando é salvo na memória apontada por `ESP` e depois, o `ESP` é decrementado, pois a pilha cresce para baixo na memória.
 
-**Aplicação no dia a dia**
+**Instrução POP**
 
-**Aplicação no dia a dia**
+A instrução `pop` faz o oposto, removendo (desempilhando) o valor do topo da pilha e o coloca em um registrador ou variável.
 
-Essa vulnerabilidade é facilmente confundida com ataques de XSS, então nem sempre existe uma proteção contra ela. 
+* `pop destino` o valor no topo da pilha é copiado para o destino e o `ESP` é incrementado, removendo esse valor da pilha.
 
-Além disso, para que não exista esse tipo de leitura de arquivos ou exploração da vulnerabilidade, algumas práticas podem ser realizadas:
+**Instrução CALL**
 
-* Nunca renderizar templates a partir de strings controladas pelo usuário.
-* Não expor objetos inteiros ao contexto do template.
-* Usar sandboxing do engine quando possível.
+Essa instrução é usada para chamar uma função que irá executar uma tarefa específica.
 
-Feito isso, o servidor ficará menos vulnerável à esse tipo de ataque.
+* `call endereço` o endereço da próxima instrução é empilhado com `push`, o `EIP` é alterado para o endereço do destino e a execução continua a partir da função chamada. Quando a função termina, ela usa `ret` que desempilha o endereço salvo e volta para a instrução seguinte à chamada.
+
+## Conclusão
+
+Nesse curso, foram abordadas apenas algumas das instruções mais usadas na linguagem Assembly x86, porém foram apresentadas aquelas que passam uma visão geral de como as operações são executadas nessa linguagem.
