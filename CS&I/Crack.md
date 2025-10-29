@@ -121,14 +121,24 @@ No GDB, serão utilizados os seguintes comandos:
 * `disassemble main` serve para mostrar o código em Assembly da função main. É útil para entendermos como o compilador traduziu nosso código em instruções de baixo nível que o processador executa.
 * `break *main+194` esse comando para a execução do programa nesse exato ponto, ele foi criado nessa linha (main+194) porque é o ponto exato em que a senha está completa e os 8 bytes foram escritos na memória.
 * `run` roda o programa desde o início parando no breakpoint criado anteriormente.
-* `x/8cb $rsp+0x10`
+* `x/8cb $rsp+0x10`: `x` vai examinar o conteúdo da memória, `/8cb` mostra 8 unidades no formato de char e byte e `$rsp+0x10` é o endereço base que possui o ponteiro da stack (rsp) mais um deslocamento de 16 bytes.
+
+Algumas considerações importantes sobre o uso de cada comando:
+
+O breakpoint só foi criado no endereço `main+194` porque na disassembly da função main, há um loop que escreve os 8 caracteres da senha gerada para os endereços, começando por `0x10(%rsp)`. Esse loop incrementa `%rdx` de 0 até 7 e a instrução que marca o fim desse processo é: `0x0000000000001327 <+123>: je 0x136e <main+194>`.
+
+Além disso, sabemos que o endereço base é o `$rsp+0x10` porque é possível ver, por exemplo, na linha ` 0x000000000000131b <+111>:   mov    %al,0x10(%rsp,%rdx,1)` onde os bytes de 0 a 7 estão sendo escritos a partir do endereço `rsp+0x10`.
 
 **Solução**
 
-Feito isso, conseguimos obter a senha:
+Ao seguir os comandos anteriores, temos:
+
+<img width="663" height="205" alt="image" src="https://github.com/user-attachments/assets/84907cdc-6262-45df-8b48-c40647a8b34d" />
+
+Feito isso, basta reescrever a palavra usando os caracteres que encontramos: `48 '0'  48 '0'  115 's' 71 'G'  111 'o' 52 '4'  77 'M'  48 '0'` e assim conseguimos obter a senha:
 
 >`00sGo4M0`
 
-**Aplicação**
+**Conclusão**
 
-
+Este desafio proporcionou uma aplicação prática e estratégica do uso do GDB para engenharia reversa de binários. Através da análise estática e dinâmica, foi possível compreender como o programa gera internamente uma senha secreta e como essa senha é comparada com a entrada do usuário. Ao identificar o ponto exato onde os bytes da senha são escritos na stack e inspecionar a memória com comandos específicos, conseguimos extrair a resposta correta sem precisar reimplementar toda a lógica do programa.
