@@ -109,11 +109,19 @@ Ao observar o que o código está fazendo, nessa exata parte:
   local_b8 = (long)dVar5;
   local_b8 = factorial(local_b8);
 ```
-Ele armazena a senha em `local_b8` após realizar algumas operações, contando com uma outra função no processo (ppeuler_3()).
+Ele armazena a senha em `local_b8` após realizar algumas operações, contando com uma outra função no processo (`ppeuler_3()`). Ou seja, a senha correta é gerada através de `factorial(floor(cbrt(ppeuler_3())))`.
 
 **Análise Inicial**
 
-Já que o valor é armazenado nessa variável `local_b8`, podemos acessar o endereço de memória em que esse `local_b8` está para encontrar o conteúdo presente nele.
+O próximo passo é abrir o GDB no binário para confirmar os valores exatos em tempo de execução, ou seja, ler diretamente os bytes que o programa gerou na pilha, evitando re-implementar o algoritmo manualmente e possíveis erros de interpretação.
+
+No GDB, serão utilizados os seguintes comandos:
+
+* `set pagination off` para desativar a paginação automática, ou seja, não pede confirmação a cada página.
+* `disassemble main` serve para mostrar o código em Assembly da função main. É útil para entendermos como o compilador traduziu nosso código em instruções de baixo nível que o processador executa.
+* `break *main+194` esse comando para a execução do programa nesse exato ponto, ele foi criado nessa linha (main+194) porque é o ponto exato em que a senha está completa e os 8 bytes foram escritos na memória.
+* `run` roda o programa desde o início parando no breakpoint criado anteriormente.
+* `x/8cb $rsp+0x10`
 
 **Solução**
 
