@@ -113,7 +113,7 @@ Ele armazena a senha em `local_b8` após realizar algumas operações, contando 
 
 **Análise Inicial**
 
-O próximo passo é abrir o GDB no binário para confirmar os valores exatos em tempo de execução, ou seja, ler diretamente os bytes que o programa gerou na pilha, evitando re-implementar o algoritmo manualmente e possíveis erros de interpretação.
+O próximo passo é abrir o GDB no executável para confirmar os valores exatos em tempo de execução, ou seja, ler diretamente os bytes que o programa gerou na pilha, evitando re-implementar o algoritmo manualmente e possíveis erros de interpretação.
 
 No GDB, serão utilizados os seguintes comandos:
 
@@ -141,4 +141,4 @@ Feito isso, basta reescrever a palavra usando os caracteres que encontramos: `48
 
 **Conclusão**
 
-Este desafio proporcionou uma aplicação prática e estratégica do uso do GDB para engenharia reversa de binários. Através da análise estática e dinâmica, foi possível compreender como o programa gera internamente uma senha secreta e como essa senha é comparada com a entrada do usuário. Ao identificar o ponto exato onde os bytes da senha são escritos na stack e inspecionar a memória com comandos específicos, conseguimos extrair a resposta correta sem precisar reimplementar toda a lógica do programa.
+Este desafio proporcionou uma aplicação prática e estratégica do uso do GDB para engenharia reversa de executáveis. Através da análise estática e dinâmica, foi possível compreender como o programa gera internamente uma senha secreta e como essa senha é comparada com a entrada do usuário. Ao identificar o ponto exato onde os bytes da senha são escritos na stack e inspecionar a memória com comandos específicos, conseguimos extrair a resposta correta sem precisar reimplementar toda a lógica do programa.
