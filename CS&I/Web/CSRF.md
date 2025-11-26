@@ -63,7 +63,36 @@ Além dos tipos de ataque, o curso também mostra alguns tipos de exploração a
 
 **Hidden Link/Image Exploitation**
 
+Essa técnica conhecida como "exploração de link/imagem oculta" é feita da seguinte forma:
 
+* O atacante insere uma imagem de 0x0 pixels ou um link em uma página web que é quase indetectável pelo usuário.
+* O elemento da imagem é definido para uma URL de destino feita para agir em nome do usuário sem que o próprio perceba.
+* Um exemplo do que pode ser feito a partir disso é o roubo de cookies.
+
+**Double Submit Cookie Bypass**
+
+O servidor gera um token aleatório e o envia ao cliente de duas formas simultâneas:
+`Como um Cookie` e `dentro de um campo oculto (hidden field) no formulário HTML`. Com isso, quando o usuário envia o formulário, o servidor compara o valor do cookie com o valor do campo do formulário. Se forem idênticos, a requisição é aceita, caso contrário, é rejeitada.
+
+Apesar de ser uma defesa eficiente, existem alguns cenários onde essa técnica pode ser quebrada:
+
+* Man in the Middle (Sequestro de Sessão): Se a conexão não for segura, um atacante pode interceptar o tráfego e roubar o token.
+* Subversão da "Same-Origin Policy": Se o atacante controlar um subdomínio do site alvo, ele pode conseguir definir cookies para o domínio principal, enganando a validação.
+* Exploração de XSS (Cross-Site Scripting): Se o site tiver falhas de XSS, o atacante pode usar scripts maliciosos para ler o token do cookie ou da página e forjar uma requisição válida.
+* Previsibilidade do Token: Se o algoritmo que gera o token for fraco, o atacante pode adivinhar o próximo token ou alterar o processo de geração.
+* Injeção de Cookie via Subdomínio: Técnica onde um subdomínio comprometido injeta um cookie falso no navegador do usuário, fazendo o servidor principal acreditar que ele é autêntico.
+
+**Samesite Cookie Bypass**
+
+O curso introduz o atributo [SameSite](https://web.dev/articles/samesite-cookies-explained?hl=pt-br) nos cookies como uma defesa crucial contra vazamento de dados entre origens (cross-origin), CSRF e XSS.
+
+Esse atributo instrui o navegador sobre quando ele deve, ou não, enviar o cookie, dependendo do contexto da requisição, ou seja, se ela vem do mesmo site ou de um site externo. Com isso, existem três configurações possíveis: Strict, Lax e None.
+
+* Lax (O Vizinho Amigável): Tem um nível de proteção moderado, geralmente é o padrão dos navegadores modernos. Permite o envio de cookies em navegações de "nível superior" (como clicar em um link para ir ao site) e métodos HTTP seguros (GET, HEAD, OPTIONS). A defesa é feita pelo bloqueio do envio de cookies em métodos perigosos vindos de fora, como POST. Isso mitiga muitos ataques CSRF, pois impede que um formulário malicioso externo use o cookie da sessão.
+
+* Strict (O Guarda Vigilante): Tem o nível de proteção máximo. O cookie nunca é enviado em requisições feitas por outros sites (cross-site). Ele só é transmitido se a requisição se originar exatamente do mesmo site que definiu o cookie. Ele é ideal para dados muito sensíveis, garantindo isolamento total.
+
+* None (O Viajante Despreocupado): Tem o nível de proteção mínimo. O cookie é enviado em todas as requisições, tanto as de originais que definiram o cookie quanto as cross-site. É usado quando serviços precisam funcionar em diferentes domínios. Para usar SameSite=None, é obrigatório usar também o atributo [Secure](https://owasp.org/www-community/controls/SecureCookieAttribute), para evitar interceptações.
 
 **Aplicação no dia a dia**
 
