@@ -57,6 +57,13 @@ Você está logada e pode mudar suas preferências sem recarregar a página. Ou 
 * Esse arquivo, quando carregado no navegador da vítima, podia enviar requisições não autorizadas para outros sites.
 * Se a vítima estivesse logada em algum serviço, o Flash usava os cookies de sessão ou outros dados para enganar o servidor, igual ao CSRF tradicional.
 
+## Técnicas de CSRF
+
+Além dos tipos de ataque, o curso também mostra alguns tipos de exploração a partir de CSRF.
+
+**Hidden Link/Image Exploitation**
+
+
 
 **Aplicação no dia a dia**
 
