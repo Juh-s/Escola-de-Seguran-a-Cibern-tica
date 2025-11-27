@@ -1,6 +1,6 @@
 # CSRF
-###### Solved by @Juh-s
->This is a CTF about Web Exploitation and SSTI
+###### Written by @Juh-s
+>This is an explanation of CSRF
 ## Sobre o curso
 
 O objetivo deste curso é ensinar como funciona a vulnerabilidade CSRF (Cross-Site Request Forgery), que traduzindo para o português seria: Falsificação de Solicitação Cruzada. Com isso, os quatro tópicos desta sala do [TryHackMe](https://tryhackme.com/room/csrfV2) são:
@@ -94,5 +94,41 @@ Esse atributo instrui o navegador sobre quando ele deve, ou não, enviar o cooki
 
 * None (O Viajante Despreocupado): Tem o nível de proteção mínimo. O cookie é enviado em todas as requisições, tanto as de originais que definiram o cookie quanto as cross-site. É usado quando serviços precisam funcionar em diferentes domínios. Para usar SameSite=None, é obrigatório usar também o atributo [Secure](https://owasp.org/www-community/controls/SecureCookieAttribute), para evitar interceptações.
 
+## Outras técnicas adicionais de exploração
+
+**Exploração via XMLHttpRequest (AJAX)**
+
+Ataques CSRF também podem ser executados através de requisições [AJAX](https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Core/Scripting/Network_requests). O ataque engana o navegador para realizar ações em um site confiável, onde o usuário está logado, sem o conhecimento dele. Isso porque, mesmo com a existência da [Política de Mesma Origem (SOP)](https://web.dev/articles/same-origin-policy?hl=pt-br), que normalmente bloqueia requisições entre origens diferentes, é possível usar JavaScript para enviar dados e cabeçalhos personalizados de forma silenciosa, executando ações na conta da vítima.
+
+**Política de Mesma Origem (SOP) e Compartilhamento de Recursos entre Origens (CORS) Bypass**
+
+Configurações incorretas de [CORS](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/CORS) podem anular as proteções da SOP, permitindo o CSRF. Se a política CORS for muito permissiva, o servidor aceitará requisições vindas de sites controlados por atacantes. Além disso,  não é possível configurar o servidor para aceitar qualquer origem, o caractere `*` e, ao mesmo tempo, aceitar credenciais. Essa combinação é bloqueada por padrão nas especificações do CORS.
+
+**Bypass do Cabeçalho Referer**
+
+É importante ressaltar o perigo da validação do cabeçalho Referer, que indica a URL da página anterior, como medida de segurança, isso porque usar apenas a checagem do Referer é uma defesa fraca. Já que o cabeçalho não é confiável, pois pode ser alterado, omitido ou removido completamente por extensões de navegador, ferramentas de privacidade ou meta tags, fazendo com que a validação do servidor falhe ou seja contornada.
+
+## Mecanismos de defesa
+
+Existem diversas formas de defesa contra ataques CSRF, para Pentesters temos:
+* Testes CSRF: Tentar forçar ações não autorizadas para ver se as defesas do site aguentam.
+* Validação de limites: Verificar se o servidor realmente confere os dados enviados pelo usuário e se exige o token anti-CSRF.
+* Análise de cabeçalhos de segurança: Analisar se as configurações de segurança do navegador (CORS e Referer) estão ativas e corretas.
+* Testes de gerenciamento de sessão: Garantir que o cookie/token da sessão do usuário é criado e transportado de forma segura, sem chance de roubo.
+* Cenários de exploração CSRF: Tentar métodos criativos de ataque, como esconder o link malicioso dentro de uma imagem ou usar partes confiáveis do site contra ele mesmo.
+
+Para programadores seguros:
+* Tokens Anti-CSRF: Colocar um código secreto e único em cada formulário, onde o servidor só aceitará a ação se o código estiver lá e for válido.
+* Atributo de Cookies SameSite: Configurar os cookies como 'Strict' ou 'Lax'. Isso impede que o navegador envie os cookies da sessão quando o usuário clica em links vindos de outros sites.
+* Política de Referenciador: Configurar o servidor para verificar de onde o usuário veio antes de aceitar a requisição, garantindo que a fonte é confiável.
+* Política de Segurança de Conteúdo (CSP): Usar a Content Security Policy (CSP) para criar uma "lista branca" de fontes permitidas, impedindo que scripts maliciosos de fora rodem no site.
+* Padrão de Duplo Envio de Cookie: Enviar o token em dois lugares ao mesmo tempo: no cookie e no formulário. O servidor comparará os dois, se não forem iguais, bloqueará.
+* Implementação de CAPTCHAS: Em ações críticas, como login ou transferências, deve-se obrigar o usuário a resolver um desafio visual para provar que não é um ataque automático.
+
 **Aplicação no dia a dia**
 
+A exploração de CSRF apresentada neste curso demonstra que mecanismos de proteção isolados, como uma validação simples de Referer ou uma implementação falha de Double Submit Cookie, não são suficientes para garantir a integridade de uma aplicação web moderna.
+
+No dia a dia do desenvolvimento de software, a compreensão profunda do CSRF é muito importante. Um simples descuido na validação de origem pode permitir que atacantes transformem a confiança do navegador, que envia cookies de sessão automaticamente, em um ataque contra o próprio usuário. Isso pode resultar em ações críticas não autorizadas, como alterações de senha, transações financeiras ou modificações em configurações de infraestrutura.
+
+Portanto, a segurança eficaz contra CSRF no mundo real exige uma estratégia de defesa em profundidade. Não basta confiar em uma única camada, é necessário combinar o uso de Tokens Anti-CSRF que sejam fortes, a configuração correta de cookies com atributos SameSite (Strict/Lax) e, para ações sensíveis, a exigência de reautenticação ou CAPTCHAs. Dessa forma, os ataques de CSRF serão mais difíceis de acontecer. 
