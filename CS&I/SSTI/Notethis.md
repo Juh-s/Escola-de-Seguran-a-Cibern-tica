@@ -24,7 +24,7 @@ Um teste para entender o funcionamento do site:
 
 Com esse teste feito, é possível entender que a aplicação está refletindo o input do usuário na tela. Dessa forma, é possível testar tipos diferentes de vulnerabilidades, como Cross-Site Scripting (XSS) ou Server Side Template Injection (SSTI).
 
-Porém, ao tentar alguns payload clássicos de XSS como: `<h1>teste</h1>`, `<script>alert(1)</script>`, `<img src="x" onerror="alert(1)">`, `<svg onload=alert(1)>`, apenas o primeiro payload foi renderizado como HTML válido e ele não seria de grande ajuda, visto que é possível apenas imprimir texto com ele e não rodar um código malicioso.
+Porém, ao tentar alguns payloads clássicos de XSS como: `<h1>teste</h1>`, `<script>alert(1)</script>`, `<img src="x" onerror="alert(1)">`, `<svg onload=alert(1)>`, apenas o primeiro payload foi renderizado como HTML válido e ele não seria de grande ajuda, visto que ele é uma tag inofensiva, então para não precisar testar diversas formas de executar JavaScript no HTML, é mais vantajoso tentar explorar a vulnerabilidade de SSTI, já que ela pode tem um maior impacto.
 
 Uma informação muito importante para saber se um servidor é vulnerável a SSTI é analisar essa tabela, que nos indica qual engine está sendo usada:
 
