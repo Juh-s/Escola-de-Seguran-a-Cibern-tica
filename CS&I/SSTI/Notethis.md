@@ -36,7 +36,7 @@ Seguindo o passo a passo do fluxograma, usando o input `${7*7}` primeiro:
 
 <img width="1911" height="835" alt="image" src="https://github.com/user-attachments/assets/50b670f8-8b21-403c-9f54-03f82dc0baf6" />
 
-O site renderiza literalmente `${7*7}`, ou seja, nada é avaliado.
+O site renderiza literalmente `${7*7}`, ou seja, podemos descartar a parte de cima do fluxograma.
 
 Porém, ao passar para o próximo passo, `{{7*7}}`: 
 
